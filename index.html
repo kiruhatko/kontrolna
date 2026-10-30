@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Контрольна: дроби і чотирикутники</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;0,7..72,700;1,7..72,400&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: аркуш контрольної — шапка з таймером (липка), далі одна колонка завдань; малюнок поруч з умовою на широкому екрані */
+:root {
+  --paper: #f5f7fa; --sheet: #ffffff; --ink: #1c2230; --muted: #5f687a; --rule: #d8dee8; --cell: #edf1f6;
+  --blue: #2b4ba6; --blue-soft: #e8edf8; --red: #c4392f; --red-soft: #fbeceb; --green: #1f7a4a; --green-soft: #e6f4ec;
+  --f-display: "Literata", Georgia, "Times New Roman", serif;
+  --f-body: "Golos Text", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f131a; --sheet: #161b24; --ink: #e4e8f0; --muted: #9aa3b5; --rule: #2a3343; --cell: #1d2430;
+    --blue: #91a8f0; --blue-soft: #1d2640; --red: #ff8676; --red-soft: #3a1f1d; --green: #6fd39b; --green-soft: #17301f; color-scheme: dark; }
+}
+:root[data-theme="dark"] {
+  --paper: #0f131a; --sheet: #161b24; --ink: #e4e8f0; --muted: #9aa3b5; --rule: #2a3343; --cell: #1d2430;
+  --blue: #91a8f0; --blue-soft: #1d2640; --red: #ff8676; --red-soft: #3a1f1d; --green: #6fd39b; --green-soft: #17301f; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.55; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--sheet); }
+.wrap { max-width: 860px; margin: 0 auto; padding-block: 0 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header { padding-block: 36px 20px; display: grid; gap: 8px; }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { font-family: var(--f-display); font-size: clamp(28px, 4.4vw, 40px); line-height: 1.12; margin: 0; text-wrap: balance; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 20px; color: var(--muted); font-size: 14.5px; }
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 14px; margin-bottom: 18px; }
+.timer { font-family: var(--f-mono); font-size: 24px; font-variant-numeric: tabular-nums; min-width: 4.2ch; }
+.timer.low { color: var(--red); }
+.bar .info { color: var(--muted); font-size: 14px; flex: 1 1 160px; min-width: 0; }
+button { font: 500 15px var(--f-body); border-radius: 5px; padding: 8px 16px; cursor: pointer; border: 1px solid var(--blue); background: var(--blue); color: var(--sheet); }
+button.ghost { background: transparent; color: var(--blue); }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.rules { font-size: 14.5px; color: var(--muted); margin: 0 0 18px; }
+.part { font-family: var(--f-display); font-size: 20px; font-weight: 600; margin: 28px 0 4px; }
+.part-note { font-size: 14px; color: var(--muted); margin: 0 0 12px; }
+.q { background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 16px 18px; margin-bottom: 12px; }
+.q.ok { border-color: var(--green); }
+.q.bad { border-color: var(--red); }
+.qh { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+.qn { font-family: var(--f-display); font-weight: 700; font-size: 20px; min-width: 1.4em; }
+.qt { font-family: var(--f-mono); font-size: 11.5px; color: var(--blue); background: var(--blue-soft); padding: 1px 7px; border-radius: 3px; }
+.qp { margin-left: auto; font-size: 13px; color: var(--muted); }
+.qbody { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+.qtext { margin: 0; font-size: 16.5px; }
+.qfig { max-width: 360px; }
+.fig { width: 100%; height: auto; display: block; }
+.opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 14px; }
+.opt { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border: 1px solid var(--rule); border-radius: 5px; cursor: pointer; min-width: 0; }
+.opt:has(input:checked) { border-color: var(--blue); background: var(--blue-soft); }
+.opt.right { border-color: var(--green); background: var(--green-soft); }
+.opt.wrong { border-color: var(--red); background: var(--red-soft); }
+.opt input { margin: 0; accent-color: var(--blue); }
+.ol { font-family: var(--f-display); font-weight: 600; min-width: 1.1em; }
+.ov { font-family: var(--f-display); font-size: 16.5px; min-width: 0; }
+.match { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 14px; }
+.mcol { display: grid; gap: 8px; align-content: start; }
+.mi, .mo { display: flex; align-items: center; gap: 10px; min-height: 44px; }
+.mi select { margin-left: auto; font: 15px var(--f-body); padding: 5px 8px; border: 1px solid var(--rule); border-radius: 5px; background: var(--sheet); color: var(--ink); }
+.mright { border-left: 1px dashed var(--rule); padding-left: 14px; }
+.openrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.openrow input { font: 17px var(--f-mono); width: 9ch; padding: 6px 10px; border: 1px solid var(--rule); border-radius: 5px; background: var(--sheet); color: var(--ink); }
+.res { margin-top: 10px; font-size: 14.5px; font-weight: 500; }
+.q.ok .res { color: var(--green); }
+.q.bad .res { color: var(--red); }
+.sol { margin-top: 6px; font-size: 14.5px; color: var(--muted); }
+.sol b { color: var(--ink); font-weight: 600; }
+.score { background: var(--sheet); border: 1.5px solid var(--blue); border-radius: 6px; padding: 16px 18px; margin: 4px 0 18px; display: grid; gap: 4px; }
+.score .big { font-family: var(--f-display); font-size: 30px; font-weight: 700; }
+.score .small { color: var(--muted); font-size: 14.5px; }
+.key { margin-top: 28px; }
+.key table { border-collapse: collapse; font-size: 14.5px; width: 100%; }
+.key-wrap { overflow-x: auto; }
+.key th, .key td { border: 1px solid var(--rule); padding: 6px 8px; text-align: center; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.key th { background: var(--cell); font-weight: 600; }
+details summary { cursor: pointer; color: var(--blue); font-weight: 500; }
+.fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .92em; line-height: 1.15; margin: 0 2px; }
+.fr > span:first-child { border-bottom: 1px solid currentColor; padding: 0 3px 1px; }
+.fr > span:last-child { padding: 1px 3px 0; }
+/* svg */
+.ln { fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linejoin: round; }
+.ln.acc { stroke: var(--blue); }
+.ln.dash { stroke: var(--blue); stroke-dasharray: 5 4; }
+.arc { fill: none; stroke: var(--ink); stroke-width: 1.2; }
+.arc.acc { stroke: var(--blue); stroke-width: 1.5; }
+.dt { fill: var(--ink); }
+.tx { fill: var(--ink); font: italic 15px var(--f-display); }
+.tx.num { font-style: normal; font-family: var(--f-body); font-size: 14px; }
+.tx.acc { fill: var(--blue); font-style: normal; font-family: var(--f-body); font-size: 13.5px; }
+@media (max-width: 560px) {
+  .opts { grid-template-columns: minmax(0, 1fr); }
+  .match { grid-template-columns: minmax(0, 1fr); }
+  .mright { border-left: 0; padding-left: 0; border-top: 1px dashed var(--rule); padding-top: 10px; }
+}
+@media (prefers-reduced-motion: no-preference) { .q { transition: border-color .2s; } }
+
+.setup { background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 18px; display: grid; gap: 12px; margin-bottom: 18px; }
+.setup .row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.setup label { display: grid; gap: 4px; font-size: 14px; color: var(--muted); }
+.setup input { font: 16px var(--f-body); padding: 8px 10px; border: 1px solid var(--rule); border-radius: 5px; background: var(--sheet); color: var(--ink); }
+.warn { color: var(--red); font-size: 14px; min-height: 1.2em; margin: 0; }
+[hidden] { display: none !important; }
+.done { background: var(--sheet); border: 1.5px solid var(--green); border-radius: 6px; padding: 22px; display: grid; gap: 8px; }
+.done h2 { font-family: var(--f-display); margin: 0; font-size: 24px; }
+.submitbox { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 18px; }
+.confirm { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 15px; }
+@media (max-width: 560px) { .setup .row { grid-template-columns: minmax(0, 1fr); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow">Математика · 8 клас</div>
+  <h1>Контрольна робота: дроби і чотирикутники</h1>
+  <div class="meta"><span>16 завдань</span><span>30 хвилин</span><span>12 балів</span></div>
+</header>
+
+<section class="setup" id="setup">
+  <div class="row">
+    <label for="stName">Прізвище та ім'я<input id="stName" type="text" autocomplete="name"></label>
+    <label for="stClass">Клас<input id="stClass" type="text" placeholder="наприклад, 8-Б"></label>
+  </div>
+  <p class="rules" style="margin:0">Після натискання «Почати» запуститься таймер на 30 хвилин. Коли час вийде, робота надішлеться вчителю автоматично. Не закривай і не оновлюй сторінку під час роботи.</p>
+  <p class="warn" id="setupWarn"></p>
+  <div><button id="startBtn" type="button">Почати</button></div>
+</section>
+
+<div id="test" hidden>
+<div class="bar" role="region" aria-label="Таймер">
+  <div class="timer" id="timer">30:00</div>
+  <div class="info" id="barinfo"></div>
+</div>
+
+<p class="rules">Завдання 1–12 мають одну правильну відповідь. У завданнях 13–14 до кожного рядка 1–3 добери букву, одна буква зайва. У завданнях 15–16 запиши відповідь числом.</p>
+
+<h2 class="part">Частина 1. Завдання з вибором відповіді</h2>
+<article class="q" id="q1" data-kind="choice"><div class="qh"><span class="qn">1</span><span class="qt">§ 1</span><span class="qp">0,5 б.</span></div><div class="qbody"><p class="qtext">Який із виразів є дробовим?</p><div class="opts"><label class="opt"><input type="radio" name="q1" id="q1_0" value="0"><span class="ol">А</span><span class="ov"><span class="fr"><span>x² − 1</span><span>3</span></span></span></label><label class="opt"><input type="radio" name="q1" id="q1_1" value="1"><span class="ol">Б</span><span class="ov">2x + <span class="fr"><span>5</span><span>7</span></span></span></label><label class="opt"><input type="radio" name="q1" id="q1_2" value="2"><span class="ol">В</span><span class="ov"><span class="fr"><span>7</span><span>x − 2</span></span></span></label><label class="opt"><input type="radio" name="q1" id="q1_3" value="3"><span class="ol">Г</span><span class="ov">0,5a²b</span></label></div></div></article><article class="q" id="q2" data-kind="choice"><div class="qh"><span class="qn">2</span><span class="qt">§ 1</span><span class="qp">0,5 б.</span></div><div class="qbody"><p class="qtext">Укажіть допустимі значення змінної у виразі <span class="fr"><span>x + 4</span><span>x² − 9</span></span>.</p><div class="opts"><label class="opt"><input type="radio" name="q2" id="q2_0" value="0"><span class="ol">А</span><span class="ov">x — будь-яке число</span></label><label class="opt"><input type="radio" name="q2" id="q2_1" value="1"><span class="ol">Б</span><span class="ov">x ≠ 3</span></label><label class="opt"><input type="radio" name="q2" id="q2_2" value="2"><span class="ol">В</span><span class="ov">x ≠ −4</span></label><label class="opt"><input type="radio" name="q2" id="q2_3" value="3"><span class="ol">Г</span><span class="ov">x ≠ 3 і x ≠ −3</span></label></div></div></article><article class="q" id="q3" data-kind="choice"><div class="qh"><span class="qn">3</span><span class="qt">§ 2</span><span class="qp">0,5 б.</span></div><div class="qbody"><p class="qtext">Скоротіть дріб <span class="fr"><span>a² − 4</span><span>3a + 6</span></span>.</p><div class="opts"><label class="opt"><input type="radio" name="q3" id="q3_0" value="0"><span class="ol">А</span><span class="ov"><span class="fr"><span>a − 2</span><span>3</span></span></span></label><label class="opt"><input type="radio" name="q3" id="q3_1" value="1"><span class="ol">Б</span><span class="ov"><span class="fr"><span>a + 2</span><span>3</span></span></span></label><label class="opt"><input type="radio" name="q3" id="q3_2" value="2"><span class="ol">В</span><span class="ov">a − 2</span></label><label class="opt"><input type="radio" name="q3" id="q3_3" value="3"><span class="ol">Г</span><span class="ov"><span class="fr"><span>a − 2</span><span>3a</span></span></span></label></div></div></article><article class="q" id="q4" data-kind="choice"><div class="qh"><span class="qn">4</span><span class="qt">§ 3</span><span class="qp">0,5 б.</span></div><div class="qbody"><p class="qtext">Виконайте віднімання: <span class="fr"><span>5x</span><span>x − y</span></span> − <span class="fr"><span>5y</span><span>x − y</span></span>.</p><div class="opts"><label class="opt"><input type="radio" name="q4" id="q4_0" value="0"><span class="ol">А</span><span class="ov"><span class="fr"><span>5(x + y)</span><span>x − y</span></span></span></label><label class="opt"><input type="radio" name="q4" id="q4_1" value="1"><span class="ol">Б</span><span class="ov">5</span></label><label class="opt"><input type="radio" name="q4" id="q4_2" value="2"><span class="ol">В</span><span class="ov">0</span></label><label class="opt"><input type="radio" name="q4" id="q4_3" value="3"><span class="ol">Г</span><span class="ov">5x − 5y</span></label></div></div></article><article class="q" id="q5" data-kind="choice"><div class="qh"><span class="qn">5</span><span class="qt">§ 4</span><span class="qp">0,5 б.</span></div><div class="qbody"><p class="qtext">Виконайте віднімання: <span class="fr"><span>x</span><span>x − 3</span></span> − <span class="fr"><span>3</span><span>x + 3</span></span>.</p><div class="opts"><label class="opt"><input type="radio" name="q5" id="q5_0" value="0"><span class="ol">А</span><span class="ov"><span class="fr"><span>x² + 9</span><span>x² − 9</span></span></span></label><label class="opt"><input type="radio" name="q5" id="q5_1" value="1"><span class="ol">Б</span><span class="ov"><span class="fr"><span>x − 3</span><span>x² − 9</span></span></span></label><label class="opt"><input type="radio" name="q5" id="q5_2" value="2"><span class="ol">В</span><span class="ov"><span class="fr"><span>x² − 9</span><span>x² + 9</span></span></span></label><label class="opt"><input type="radio" name="q5" id="q5_3" value="3"><span class="ol">Г</span><span class="ov">1</span></label></div></div></article><article class="q" id="q6" data-kind="choice"><div class="qh"><span class="qn">6</span><span class="qt">§ 10</span><span class="qp">0,5 б.</span></div><div class="qbody"><p class="qtext">Виконайте множення: <span class="fr"><span>4a²</span><span>b³</span></span> · <span class="fr"><span>b²</span><span>2a</span></span>.</p><div class="opts"><label class="opt"><input type="radio" name="q6" id="q6_0" value="0"><span class="ol">А</span><span class="ov"><span class="fr"><span>2a</span><span>b</span></span></span></label><label class="opt"><input type="radio" name="q6" id="q6_1" value="1"><span class="ol">Б</span><span class="ov">2ab</span></label><label class="opt"><input type="radio" name="q6" id="q6_2" value="2"><span class="ol">В</span><span class="ov"><span class="fr"><span>8a³</span><span>b⁵</span></span></span></label><label class="opt"><input type="radio" name="q6" id="q6_3" value="3"><span class="ol">Г</span><span class="ov"><span class="fr"><span>a</span><span>2b</span></span></span></label></div></div></article><article class="q" id="q7" data-kind="choice"><div class="qh"><span class="qn">7</span><span class="qt">§ 10</span><span class="qp">0,5 б.</span></div><div class="qbody"><p class="qtext">Піднесіть дріб до степеня: (<span class="fr"><span>−2x</span><span>y³</span></span>)³.</p><div class="opts"><label class="opt"><input type="radio" name="q7" id="q7_0" value="0"><span class="ol">А</span><span class="ov"><span class="fr"><span>8x³</span><span>y⁹</span></span></span></label><label class="opt"><input type="radio" name="q7" id="q7_1" value="1"><span class="ol">Б</span><span class="ov">−<span class="fr"><span>8x³</span><span>y⁹</span></span></span></label><label class="opt"><input type="radio" name="q7" id="q7_2" value="2"><span class="ol">В</span><span class="ov">−<span class="fr"><span>6x³</span><span>y⁶</span></span></span></label><label class="opt"><input type="radio" name="q7" id="q7_3" value="3"><span class="ol">Г</span><span class="ov">−<span class="fr"><span>2x³</span><span>y⁹</span></span></span></label></div></div></article><article class="q" id="q8" data-kind="choice"><div class="qh"><span class="qn">8</span><span class="qt">§ 5</span><span class="qp">0,5 б.</span></div><div class="qbody"><p class="qtext">Кути чотирикутника відносяться як 1 : 2 : 3 : 4. Знайдіть найбільший кут.</p><div class="opts"><label class="opt"><input type="radio" name="q8" id="q8_0" value="0"><span class="ol">А</span><span class="ov">120°</span></label><label class="opt"><input type="radio" name="q8" id="q8_1" value="1"><span class="ol">Б</span><span class="ov">144°</span></label><label class="opt"><input type="radio" name="q8" id="q8_2" value="2"><span class="ol">В</span><span class="ov">150°</span></label><label class="opt"><input type="radio" name="q8" id="q8_3" value="3"><span class="ol">Г</span><span class="ov">160°</span></label></div></div></article><article class="q" id="q9" data-kind="choice"><div class="qh"><span class="qn">9</span><span class="qt">§ 6</span><span class="qp">0,5 б.</span></div><div class="qbody"><p class="qtext">Бісектриса кута A паралелограма ABCD перетинає сторону BC у точці K, BK = 5 см, KC = 3 см. Знайдіть периметр паралелограма.</p><div class="qfig"><svg viewBox="0 0 340 175" class="fig" role="img" aria-label="Паралелограм ABCD з бісектрисою AK"><polygon points="30.0,150.0 95.0,37.4 303.0,37.4 238.0,150.0" class="ln"/><line x1="30.0" y1="150.0" x2="225.0" y2="37.4" class="ln acc"/><path d="M43.0,127.5 A26,26 0 0 1 52.5,137.0" class="arc"/><path d="M57.7,134.0 A32,32 0 0 1 62.0,150.0" class="arc"/><circle cx="225.0" cy="37.4" r="2.6" class="dt"/><text x="22.0" y="164.0" text-anchor="middle" class="tx">A</text><text x="89.0" y="29.4" text-anchor="middle" class="tx">B</text><text x="309.0" y="29.4" text-anchor="middle" class="tx">C</text><text x="246.0" y="164.0" text-anchor="middle" class="tx">D</text><text x="225.0" y="28.4" text-anchor="middle" class="tx">K</text><text x="160.0" y="53.4" text-anchor="middle" class="tx num">5</text><text x="264.0" y="53.4" text-anchor="middle" class="tx num">3</text></svg></div><div class="opts"><label class="opt"><input type="radio" name="q9" id="q9_0" value="0"><span class="ol">А</span><span class="ov">16 см</span></label><label class="opt"><input type="radio" name="q9" id="q9_1" value="1"><span class="ol">Б</span><span class="ov">21 см</span></label><label class="opt"><input type="radio" name="q9" id="q9_2" value="2"><span class="ol">В</span><span class="ov">26 см</span></label><label class="opt"><input type="radio" name="q9" id="q9_3" value="3"><span class="ol">Г</span><span class="ov">36 см</span></label></div></div></article><article class="q" id="q10" data-kind="choice"><div class="qh"><span class="qn">10</span><span class="qt">§ 7</span><span class="qp">0,5 б.</span></div><div class="qbody"><p class="qtext">Діагоналі прямокутника ABCD перетинаються в точці O, ∠AOB = 60°, AC = 12 см. Знайдіть сторону AB.</p><div class="qfig"><svg viewBox="0 0 230 145" class="fig" role="img" aria-label="Прямокутник ABCD з діагоналями, кут AOB = 60°"><polygon points="40.0,125.0 40.0,41.0 185.5,41.0 185.5,125.0" class="ln"/><line x1="40.0" y1="125.0" x2="185.5" y2="41.0" class="ln"/><line x1="40.0" y1="41.0" x2="185.5" y2="125.0" class="ln"/><circle cx="112.7" cy="83.0" r="2.6" class="dt"/><path d="M95.4,93.0 A20,20 0 0 1 95.4,73.0" class="arc acc"/><text x="86.7" y="87.0" text-anchor="end" class="tx acc">60°</text><text x="32.0" y="139.0" text-anchor="middle" class="tx">A</text><text x="32.0" y="37.0" text-anchor="middle" class="tx">B</text><text x="193.5" y="37.0" text-anchor="middle" class="tx">C</text><text x="193.5" y="139.0" text-anchor="middle" class="tx">D</text><text x="112.7" y="74.0" text-anchor="middle" class="tx">O</text></svg></div><div class="opts"><label class="opt"><input type="radio" name="q10" id="q10_0" value="0"><span class="ol">А</span><span class="ov">4 см</span></label><label class="opt"><input type="radio" name="q10" id="q10_1" value="1"><span class="ol">Б</span><span class="ov">6 см</span></label><label class="opt"><input type="radio" name="q10" id="q10_2" value="2"><span class="ol">В</span><span class="ov">8 см</span></label><label class="opt"><input type="radio" name="q10" id="q10_3" value="3"><span class="ol">Г</span><span class="ov">12 см</span></label></div></div></article><article class="q" id="q11" data-kind="choice"><div class="qh"><span class="qn">11</span><span class="qt">§ 8</span><span class="qp">0,5 б.</span></div><div class="qbody"><p class="qtext">Один із кутів ромба ABCD дорівнює 120°, а менша діагональ BD = 7 см. Знайдіть периметр ромба.</p><div class="qfig"><svg viewBox="0 0 230 150" class="fig" role="img" aria-label="Ромб ABCD, кут B = 120°, діагональ BD = 7"><polygon points="42.3,75.0 115.0,33.0 187.7,75.0 115.0,117.0" class="ln"/><line x1="115.0" y1="33.0" x2="115.0" y2="117.0" class="ln dash"/><path d="M128.9,41.0 A16,16 0 0 1 101.1,41.0" class="arc acc"/><text x="123.0" y="63.0" text-anchor="start" class="tx acc">120°</text><text x="106.0" y="93.0" text-anchor="end" class="tx num">7</text><text x="33.3" y="80.0" text-anchor="middle" class="tx">A</text><text x="115.0" y="25.0" text-anchor="middle" class="tx">B</text><text x="196.7" y="80.0" text-anchor="middle" class="tx">C</text><text x="115.0" y="134.0" text-anchor="middle" class="tx">D</text></svg></div><div class="opts"><label class="opt"><input type="radio" name="q11" id="q11_0" value="0"><span class="ol">А</span><span class="ov">14 см</span></label><label class="opt"><input type="radio" name="q11" id="q11_1" value="1"><span class="ol">Б</span><span class="ov">21 см</span></label><label class="opt"><input type="radio" name="q11" id="q11_2" value="2"><span class="ol">В</span><span class="ov">28 см</span></label><label class="opt"><input type="radio" name="q11" id="q11_3" value="3"><span class="ol">Г</span><span class="ov">56 см</span></label></div></div></article><article class="q" id="q12" data-kind="choice"><div class="qh"><span class="qn">12</span><span class="qt">§ 9</span><span class="qp">0,5 б.</span></div><div class="qbody"><p class="qtext">Яке з тверджень <b>неправильне</b>?</p><div class="opts"><label class="opt"><input type="radio" name="q12" id="q12_0" value="0"><span class="ol">А</span><span class="ov">Діагоналі квадрата рівні</span></label><label class="opt"><input type="radio" name="q12" id="q12_1" value="1"><span class="ol">Б</span><span class="ov">Діагоналі квадрата перпендикулярні</span></label><label class="opt"><input type="radio" name="q12" id="q12_2" value="2"><span class="ol">В</span><span class="ov">Діагональ квадрата утворює з його стороною кут 45°</span></label><label class="opt"><input type="radio" name="q12" id="q12_3" value="3"><span class="ol">Г</span><span class="ov">Будь-який ромб є квадратом</span></label></div></div></article>
+<h2 class="part">Частина 2. Відповідність</h2>
+<p class="part-note">До кожного рядка 1–3 добери одну букву А–Г. Одна буква зайва.</p>
+<article class="q" id="q13" data-kind="match"><div class="qh"><span class="qn">13</span><span class="qt">§§ 2–4, 10</span><span class="qp">1,5 б.</span></div><div class="qbody"><p class="qtext">Установіть відповідність між виразом (1–3) і результатом його спрощення (А–Г).</p><div class="match"><div class="mcol"><div class="mi"><span class="ol">1</span><span class="ov"><span class="fr"><span>x² − 2x</span><span>x² − 4</span></span></span><select id="q13_0" aria-label="Відповідь для 1"><option value="">—</option><option value="0">А</option><option value="1">Б</option><option value="2">В</option><option value="3">Г</option></select></div><div class="mi"><span class="ol">2</span><span class="ov"><span class="fr"><span>x + 2</span><span>x</span></span> − <span class="fr"><span>2</span><span>x</span></span></span><select id="q13_1" aria-label="Відповідь для 2"><option value="">—</option><option value="0">А</option><option value="1">Б</option><option value="2">В</option><option value="3">Г</option></select></div><div class="mi"><span class="ol">3</span><span class="ov"><span class="fr"><span>x − 2</span><span>x</span></span> · <span class="fr"><span>x</span><span>x² − 4</span></span></span><select id="q13_2" aria-label="Відповідь для 3"><option value="">—</option><option value="0">А</option><option value="1">Б</option><option value="2">В</option><option value="3">Г</option></select></div></div><div class="mcol mright"><div class="mo"><span class="ol">А</span><span class="ov"><span class="fr"><span>x</span><span>x + 2</span></span></span></div><div class="mo"><span class="ol">Б</span><span class="ov">1</span></div><div class="mo"><span class="ol">В</span><span class="ov"><span class="fr"><span>1</span><span>x + 2</span></span></span></div><div class="mo"><span class="ol">Г</span><span class="ov">x + 2</span></div></div></div></div></article><article class="q" id="q14" data-kind="match"><div class="qh"><span class="qn">14</span><span class="qt">§ 6</span><span class="qp">1,5 б.</span></div><div class="qbody"><p class="qtext">У паралелограмі ABCD ∠A = 70°. Установіть відповідність між величиною (1–3) та її значенням (А–Г).</p><div class="qfig"><svg viewBox="0 0 250 130" class="fig" role="img" aria-label="Паралелограм ABCD, кут A = 70°"><polygon points="25.0,110.0 57.8,19.8 225.8,19.8 193.0,110.0" class="ln"/><path d="M32.5,89.3 A22,22 0 0 1 47.0,110.0" class="arc acc"/><text x="55.0" y="102.0" text-anchor="start" class="tx acc">70°</text><text x="17.0" y="124.0" text-anchor="middle" class="tx">A</text><text x="51.8" y="11.8" text-anchor="middle" class="tx">B</text><text x="231.8" y="11.8" text-anchor="middle" class="tx">C</text><text x="201.0" y="124.0" text-anchor="middle" class="tx">D</text></svg></div><div class="match"><div class="mcol"><div class="mi"><span class="ol">1</span><span class="ov">∠C</span><select id="q14_0" aria-label="Відповідь для 1"><option value="">—</option><option value="0">А</option><option value="1">Б</option><option value="2">В</option><option value="3">Г</option></select></div><div class="mi"><span class="ol">2</span><span class="ov">∠B</span><select id="q14_1" aria-label="Відповідь для 2"><option value="">—</option><option value="0">А</option><option value="1">Б</option><option value="2">В</option><option value="3">Г</option></select></div><div class="mi"><span class="ol">3</span><span class="ov">∠B + ∠D</span><select id="q14_2" aria-label="Відповідь для 3"><option value="">—</option><option value="0">А</option><option value="1">Б</option><option value="2">В</option><option value="3">Г</option></select></div></div><div class="mcol mright"><div class="mo"><span class="ol">А</span><span class="ov">70°</span></div><div class="mo"><span class="ol">Б</span><span class="ov">110°</span></div><div class="mo"><span class="ol">В</span><span class="ov">140°</span></div><div class="mo"><span class="ol">Г</span><span class="ov">220°</span></div></div></div></div></article>
+<h2 class="part">Частина 3. Коротка відповідь</h2>
+<article class="q" id="q15" data-kind="open"><div class="qh"><span class="qn">15</span><span class="qt">§§ 4, 10</span><span class="qp">1,5 б.</span></div><div class="qbody"><p class="qtext">Спростіть вираз (<span class="fr"><span>a</span><span>a − b</span></span> − <span class="fr"><span>b</span><span>a + b</span></span>) · <span class="fr"><span>a² − b²</span><span>a² + b²</span></span>. Запишіть відповідь числом.</p><div class="openrow"><label for="q15_in">Відповідь:</label><input type="text" inputmode="decimal" id="q15_in" autocomplete="off"></div></div></article><article class="q" id="q16" data-kind="open"><div class="qh"><span class="qn">16</span><span class="qt">§ 6</span><span class="qp">1,5 б.</span></div><div class="qbody"><p class="qtext">Периметр паралелограма дорівнює 48 см, а одна з його сторін на 6 см більша за іншу. Знайдіть більшу сторону паралелограма (у сантиметрах).</p><div class="openrow"><label for="q16_in">Відповідь:</label><input type="text" inputmode="decimal" id="q16_in" autocomplete="off"></div></div></article>
+
+<div class="submitbox" id="submitbox">
+  <button id="submitBtn" type="button">Здати роботу</button>
+  <div class="confirm" id="confirmBox" hidden>
+    <span id="confirmText">Точно здати? Змінити відповіді вже не вийде.</span>
+    <button id="confirmYes" type="button">Так, здати</button>
+    <button id="confirmNo" type="button" class="ghost">Ще подумаю</button>
+  </div>
+</div>
+</div>
+
+<section class="done" id="done" hidden>
+  <h2 id="doneTitle">Роботу здано</h2>
+  <p id="doneText" style="margin:0">Відповіді надіслано вчителю. Сторінку можна закрити.</p>
+  <div><button id="retryBtn" type="button" hidden>Надіслати ще раз</button></div>
+  <p id="tech" style="margin:0;font-size:12px;color:var(--muted)"></p>
+  <div><button id="againBtn" type="button" class="ghost">Пройти ще раз</button></div>
+</section>
+</div>
+
+<script>
+/* ======== НАЛАШТУВАННЯ ДЛЯ ВЧИТЕЛЯ ======== */
+const BOT_TOKEN = "ВСТАВ_СЮДИ_ТОКЕН_БОТА";   // від @BotFather, вигляд 123456789:AAH...
+const CHAT_ID   = "8702963105";      // твій chat id (число)
+const MINUTES   = 30;
+/* ========================================== */
+
+if (BOT_TOKEN.includes("ВСТАВ") || CHAT_ID.includes("ВСТАВ")) document.addEventListener("DOMContentLoaded", () => { const w = document.getElementById("setupWarn"); if (w) w.textContent = "Для вчителя: у файлі не вписано токен бота або chat id."; });
+const K = JSON.parse((s => { const m = "istr8kl", b = atob(s); let o = ""; for (let i = 0; i < b.length; i++) o += String.fromCharCode(b.charCodeAt(i) ^ m.charCodeAt(i % m.length)); return o; })("MghWGRpRTgpRWFBZSVZbX1YCGlFcR0YJXkNJB0tJVhEaR04IUU5BFEkcS0lEXA0WQBJRH1ACSQ9LX1YTGlFcRVEEUAJbQlwOWAkaAE5TURdQFEkNS0lFXhobTlNDWkdFRxdLGFZIGghORVEVUAJbQEsDVkgIRVkUXw9QU0lWSxBWXhoKTlNDWFBISVZZXUEPFBBOAlFOUFtJQEsSVkgJR04ZUU5CFl4RRQhWGRpRTgpRWFBZSVZYX1YCGlFcR0YJXkNJB0tJVhEaR04IUU5AFEkcS0lEXA0WQBJRH1ACSQ9LX1YTGlFdRVEEUAJbQlwOWAkaAE5TURdQFEkNS0lGXhobTlNDWkdFRxdLGFZIGghORVEVUAJYQEsDVkgIRVkUXw9QU0lWSx5WXhoKTlMoRF4JR140X1YCGlFdR0YJXkNJB0tJVh8aR04IUU4pCEddRUApXhobTlNCWkdFRxdLGFZIGgRORVEVUAIwTlhRKV4aG05TQlpHRUcXSxhWSBoETkVRFVACME5YRlYvFEkcS0lFXA0WMQ=="));
+const L4 = ["А","Б","В","Г"];
+const $ = id => document.getElementById(id);
+let left = MINUTES * 60, tick = null, finished = false, leaves = 0, startedAt = null, report = "";
+const fmt = s => String(Math.floor(s/60)).padStart(2,"0") + ":" + String(s%60).padStart(2,"0");
+const num = x => String(x).replace(".", ",");
+
+function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+
+
+$("startBtn").addEventListener("click", () => {
+  const name = $("stName").value.trim(), cls = $("stClass").value.trim();
+  if (name.length < 3) { $("setupWarn").textContent = "Впиши прізвище та ім'я."; $("stName").focus(); return; }
+  if (!cls) { $("setupWarn").textContent = "Впиши клас."; $("stClass").focus(); return; }
+  $("stName").disabled = $("stClass").disabled = true;
+  $("setup").hidden = true; $("test").hidden = false;
+  $("barinfo").textContent = name + ", " + cls;
+  startedAt = new Date();
+  tick = setInterval(() => { left--; render(); if (left <= 0) finish(true); }, 1000);
+  render(); window.scrollTo({ top: 0 });
+});
+function render() { $("timer").textContent = fmt(Math.max(left, 0)); $("timer").classList.toggle("low", left <= 300); }
+
+document.addEventListener("visibilitychange", () => { if (document.hidden && tick && !finished) leaves++; });
+window.addEventListener("beforeunload", e => { if (tick && !finished) { e.preventDefault(); e.returnValue = ""; } });
+
+$("submitBtn").addEventListener("click", () => {
+  const empty = countEmpty();
+  $("confirmText").textContent = (empty ? `Без відповіді: ${empty}. ` : "") + "Точно здати? Змінити відповіді вже не вийде.";
+  $("confirmBox").hidden = false; $("submitBtn").hidden = true;
+});
+$("confirmNo").addEventListener("click", () => { $("confirmBox").hidden = true; $("submitBtn").hidden = false; });
+$("confirmYes").addEventListener("click", () => finish(false));
+$("retryBtn").addEventListener("click", send);
+$("againBtn").addEventListener("click", () => location.reload());
+
+function countEmpty() {
+  let e = 0;
+  K.forEach((k, i) => {
+    const n = i + 1;
+    if (k.k === "c" && !document.querySelector(`input[name="q${n}"]:checked`)) e++;
+    if (k.k === "m" && k.a.some((_, r) => $(`q${n}_${r}`).value === "")) e++;
+    if (k.k === "o" && !$(`q${n}_in`).value.trim()) e++;
+  });
+  return e;
+}
+
+function finish(timeout) {
+  if (finished) return;
+  finished = true; clearInterval(tick); tick = null;
+  let total = 0; const lines = [];
+  K.forEach((k, i) => {
+    const n = i + 1; let got = 0, mine = "—", right = "";
+    if (k.k === "c") {
+      const s = document.querySelector(`input[name="q${n}"]:checked`);
+      if (s) { mine = L4[+s.value]; if (+s.value === k.a) got = k.p; }
+      right = L4[k.a];
+    } else if (k.k === "m") {
+      mine = k.a.map((a, r) => { const v = $(`q${n}_${r}`).value; if (v !== "" && +v === a) got += 0.5; return (r+1) + (v === "" ? "?" : L4[+v]); }).join(" ");
+      right = k.a.map((a, r) => (r+1) + L4[a]).join(" ");
+    } else {
+      const v = $(`q${n}_in`).value.trim(); if (v) mine = v;
+      if (k.a.includes(v.replace(",", ".").replace(/\s|см/g, ""))) got = k.p;
+      right = k.a[0];
+    }
+    total += got;
+    const mark = got === k.p ? "✅" : (got > 0 ? "🟡" : "❌");
+    lines.push(`${n}. ${mine} ${mark}` + (got === k.p ? "" : ` (прав.: ${right})`) + (k.k === "m" ? ` — ${num(got)}/${num(k.p)}` : ""));
+  });
+  const used = MINUTES * 60 - Math.max(left, 0);
+  report =
+`📝 Контрольна: дроби і чотирикутники
+👤 ${$("stName").value.trim()}, ${$("stClass").value.trim()}
+🎯 Бали: ${num(total)} з 12
+⏱ Час: ${fmt(used)}${timeout ? " (час вийшов, здано автоматично)" : ""}
+🔀 Виходів зі сторінки: ${leaves}
+🕒 Початок: ${startedAt.toLocaleString("uk-UA")}
+
+${lines.join("\n")}`;
+  $("test").hidden = true; $("done").hidden = false;
+  $("doneTitle").textContent = timeout ? "Час вийшов" : "Роботу здано";
+  window.scrollTo({ top: 0 });
+  send();
+}
+
+let lastErr = "";
+function viaForm(base) {
+  // надсилання через приховану форму: працює як звичайне відкриття посилання, без обмежень fetch
+  return new Promise(res => {
+    let fr = document.getElementById("tgFrame");
+    if (!fr) { fr = document.createElement("iframe"); fr.name = "tgFrame"; fr.id = "tgFrame"; fr.style.display = "none"; document.body.appendChild(fr); }
+    const f = document.createElement("form"); f.method = "POST"; f.action = base; f.target = "tgFrame"; f.style.display = "none";
+    for (const [k, v] of [["chat_id", CHAT_ID.trim()], ["text", report]]) { const i = document.createElement("input"); i.type = "hidden"; i.name = k; i.value = v; f.appendChild(i); }
+    document.body.appendChild(f);
+    const t = setTimeout(() => res(false), 8000);
+    fr.onload = () => { clearTimeout(t); res(true); };
+    f.submit();
+  });
+}
+async function send() {
+  lastErr = "";
+  $("retryBtn").hidden = true;
+  $("doneText").textContent = "Надсилаю відповіді вчителю…";
+  const base = `https://api.telegram.org/bot${BOT_TOKEN.trim()}/sendMessage`;
+  const url = base + "?chat_id=" + encodeURIComponent(CHAT_ID.trim()) + "&text=" + encodeURIComponent(report);
+  let ok = false;
+  try {
+    const r = await fetch(url, { method: "GET", cache: "no-store" });
+    if (r.ok) ok = true;
+    else { let d = ""; try { d = (await r.json()).description || ""; } catch (e) {} lastErr = "Telegram " + r.status + " " + d; }
+  } catch (e) {
+    lastErr = String(e && e.message || e);
+    ok = await viaForm(base);
+    if (!ok) lastErr += " / форма не відповіла";
+  }
+  console.log("Telegram send:", ok, lastErr);
+  $("tech").textContent = "Тех. інфо: " + (ok ? "надіслано" : "помилка") + (lastErr ? " · " + lastErr : " · прямий запит");
+  if (ok) {
+    $("doneText").textContent = "Відповіді надіслано вчителю. Сторінку можна закрити.";
+  } else {
+    $("doneText").textContent = "Не вдалося надіслати. Перевір інтернет і натисни «Надіслати ще раз». (Помилка: " + lastErr + ")";
+    $("retryBtn").hidden = false;
+  }
+}
+</script>
+</body>
+</html>
