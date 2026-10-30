@@ -281,11 +281,18 @@ function viaForm(base) {
 async function send() {
   $("retryBtn").hidden = true;
   const url = `https://api.telegram.org/bot${BOT_TOKEN.trim()}/sendMessage?chat_id=` + encodeURIComponent(CHAT_ID.trim()) + "&text=" + encodeURIComponent(report);
-  let how = "";
-  try { if (navigator.sendBeacon && navigator.sendBeacon(url)) how = "beacon"; } catch (e) {}
-  if (!how) { const img = new Image(); img.src = url; how = "img"; }
-  $("doneText").textContent = "Відповіді надіслано вчителю. Сторінку можна закрити.";
-  $("tech").textContent = "Тех. інфо: " + how;
+  // звичайний GET-запит без заголовків, як відкриття посилання в адресному рядку
+  const img = new Image(); img.referrerPolicy = "no-referrer"; img.src = url;
+  $("doneText").textContent = "Відповіді надіслано вчителю. Покажи або надішли вчителю скрін цього екрана.";
+  $("tech").innerHTML = "Код відповідей: <b style=\"font-family:var(--f-mono);font-size:15px;color:var(--ink)\">" + answerCode() + "</b>";
+}
+function answerCode() {
+  return K.map((k, i) => {
+    const n = i + 1;
+    if (k.k === "c") { const s = document.querySelector(`input[name="q${n}"]:checked`); return n + (s ? L4[+s.value] : "-"); }
+    if (k.k === "m") return n + ":" + k.a.map((_, r) => { const v = $(`q${n}_${r}`).value; return v === "" ? "-" : L4[+v]; }).join("");
+    return n + ":" + ($(`q${n}_in`).value.trim() || "-");
+  }).join(" ");
 }
 </script>
 </body>
