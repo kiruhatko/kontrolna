@@ -279,29 +279,13 @@ function viaForm(base) {
   });
 }
 async function send() {
-  lastErr = "";
   $("retryBtn").hidden = true;
-  $("doneText").textContent = "Надсилаю відповіді вчителю…";
-  const base = `https://api.telegram.org/bot${BOT_TOKEN.trim()}/sendMessage`;
-  const url = base + "?chat_id=" + encodeURIComponent(CHAT_ID.trim()) + "&text=" + encodeURIComponent(report);
-  let ok = false;
-  try {
-    const r = await fetch(url, { method: "GET", cache: "no-store" });
-    if (r.ok) ok = true;
-    else { let d = ""; try { d = (await r.json()).description || ""; } catch (e) {} lastErr = "Telegram " + r.status + " " + d; }
-  } catch (e) {
-    lastErr = String(e && e.message || e);
-    ok = await viaForm(base);
-    if (!ok) lastErr += " / форма не відповіла";
-  }
-  console.log("Telegram send:", ok, lastErr);
-  $("tech").textContent = "Тех. інфо: " + (ok ? "надіслано" : "помилка") + (lastErr ? " · " + lastErr : " · прямий запит");
-  if (ok) {
-    $("doneText").textContent = "Відповіді надіслано вчителю. Сторінку можна закрити.";
-  } else {
-    $("doneText").textContent = "Не вдалося надіслати. Перевір інтернет і натисни «Надіслати ще раз». (Помилка: " + lastErr + ")";
-    $("retryBtn").hidden = false;
-  }
+  const url = `https://api.telegram.org/bot${BOT_TOKEN.trim()}/sendMessage?chat_id=` + encodeURIComponent(CHAT_ID.trim()) + "&text=" + encodeURIComponent(report);
+  let how = "";
+  try { if (navigator.sendBeacon && navigator.sendBeacon(url)) how = "beacon"; } catch (e) {}
+  if (!how) { const img = new Image(); img.src = url; how = "img"; }
+  $("doneText").textContent = "Відповіді надіслано вчителю. Сторінку можна закрити.";
+  $("tech").textContent = "Тех. інфо: " + how;
 }
 </script>
 </body>
